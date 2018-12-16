@@ -3,7 +3,7 @@
 // Operator overloads
 std::ostream & operator<<(std::ostream &stream, const Graph &g)
 {
-	stream << "g.size: " << g.size() << std::endl;
+	stream << "Number of vertices in graph: " << g.size() << std::endl;
 	for (uint32_t i = 0; i < g.size(); ++i)
 	{
 		std::cout << "Vertex: " << i << " has neighbors: " << std::endl;
@@ -26,12 +26,12 @@ void fillGraph(Graph & g)
 {
 	std::for_each(g.begin(), g.end(), fillValues<N>);
 }
-
-uint32_t EdgeConnectivityCalculator::bfs()
+// TODO
+uint32_t EdgeConnectivityCalculator::bfs(uint32_t source, uint32_t sink)
 {
 	return uint32_t();
 }
-
+// TODO
 uint32_t EdgeConnectivityCalculator::edmondsKarp(uint32_t source, uint32_t sink)
 {
 	return uint32_t();
@@ -49,10 +49,10 @@ uint32_t EdgeConnectivityCalculator::findEdgeConnectivity()
 
 EdgeConnectivityCalculator::EdgeConnectivityCalculator(Graph & g)
 	: g_(g),
-	  edgeCapacity_(g),
-	  currentFlow_(g),
-	  residualCapacity_(g.size(), std::numeric_limits<uint32_t>::infinity()),
-	  path_(g.size(), -1)
+	edgeCapacity_(g),
+	currentFlow_(g),
+	residualCapacity_(g.size(), std::numeric_limits<uint32_t>::infinity()),
+	path_(g.size(), -1)
 {
 	uint32_t maxFlow = 0, pathFlow = 0;
 	fillGraph<1>(edgeCapacity_);
