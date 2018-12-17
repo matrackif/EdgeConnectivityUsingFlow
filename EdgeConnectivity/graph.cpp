@@ -16,25 +16,74 @@ std::ostream & operator<<(std::ostream &stream, const Graph &g)
 	return stream;
 }
 
-template<uint32_t N>
-void fillValues(std::vector<uint32_t> & connections)
+template<typename Vec, typename VecType>
+void fill1DVec(Vec & vec, VecType vt)
 {
-	connections.assign(connections.size(), N);
+	vec.assign(vec.size(), vt);
 }
-template<uint32_t N>
-void fillGraph(Graph & g)
+
+template<typename Vec, typename VecType>
+void fill2DVec(Vec & vec, VecType vt)
 {
-	std::for_each(g.begin(), g.end(), fillValues<N>);
+	for (auto & row : vec)
+	{
+		fill1DVec(row, vt);
+	}
 }
-// TODO
-uint32_t EdgeConnectivityCalculator::bfs(uint32_t source, uint32_t sink)
+
+uint32_t EdgeConnectivityCalculator::bfs(uint32_t u, uint32_t v)
 {
-	return uint32_t();
+	uint32_t vertexCount = g_.size();
+	std::queue<uint32_t> queue;
+	queue.push(u);
+
+	while (!queue.empty())
+	{
+		const uint32_t i = queue.front();
+		queue.pop();
+		for (uint32_t j = 0; j < g_[i].size(); ++j)
+		{
+			uint32_t neighbor = g_[i][j];
+			uint32_t currentResidualCapacity = edgeCapacity_[i][j] - currentFlow_[i][j];
+			if (path_[neighbor] == -1 && (currentResidualCapacity > 0))
+			{
+				path_[neighbor] = i;
+				residualCapacity_[neighbor] = std::min(residualCapacity_[i], currentResidualCapacity);
+				if (neighbor != v)
+				{
+					queue.push(neighbor);
+				}
+				else
+				{
+					return residualCapacity_[v];
+				}
+			}
+		}
+	}
+
+	return 0;
 }
-// TODO
+
 uint32_t EdgeConnectivityCalculator::edmondsKarp(uint32_t source, uint32_t sink)
 {
-	return uint32_t();
+	clearData();
+	uint32_t pathFlow = 0, maxFlow = 0;
+	while ((pathFlow = bfs(source, sink)) > 0)
+	{
+		uint32_t s = sink;
+		while (s != source)
+		{
+			uint32_t prev = path_[s];
+			// Workaround, maybe we should use a matrix instead of a 2d list after all?
+			uint32_t indexOfPrev = std::distance(g_[s].begin(), std::find(g_[s].begin(), g_[s].end(), prev));
+			uint32_t indexOfS = std::distance(g_[prev].begin(), std::find(g_[prev].begin(), g_[prev].end(), s));
+			currentFlow_[s][indexOfPrev] += pathFlow;
+			currentFlow_[prev][indexOfS] -= pathFlow;
+			s = prev;
+		}
+		maxFlow += pathFlow;
+	}
+	return maxFlow;
 }
 
 uint32_t EdgeConnectivityCalculator::findEdgeConnectivity()
@@ -47,16 +96,35 @@ uint32_t EdgeConnectivityCalculator::findEdgeConnectivity()
 	return result;
 }
 
-EdgeConnectivityCalculator::EdgeConnectivityCalculator(Graph & g)
-	: g_(g),
-	edgeCapacity_(g),
-	currentFlow_(g),
-	residualCapacity_(g.size(), std::numeric_limits<uint32_t>::infinity()),
-	path_(g.size(), -1)
+void EdgeConnectivityCalculator::clearData()
 {
-	uint32_t maxFlow = 0, pathFlow = 0;
-	fillGraph<1>(edgeCapacity_);
-	fillGraph<0>(currentFlow_);
-	std::cout << "Found edge connectivity: " << findEdgeConnectivity();
+	fill2DVec(currentFlow_, 0);
+	fill1DVec(path_, -1);
+	fill1DVec(residualCapacity_, 0);
+	residualCapacity_[0] = std::numeric_limits<uint32_t>::max();
+}
 
+void EdgeConnectivityCalculator::initializeDataFromGraph(Graph & g)
+{
+	// Copy graph structure 
+	g_ = Graph(g);
+	edgeCapacity_ = Graph(g);
+	currentFlow_ = FlowVecType(g.size());
+	for (uint32_t i = 0; i < currentFlow_.size(); i++)
+	{
+		currentFlow_[i].resize(g_[i].size(), 0);
+	}
+	residualCapacity_ = std::vector<uint32_t>(g.size());
+	path_ = std::vector<uint32_t>(g.size());
+	clearData();
+}
+
+EdgeConnectivityCalculator::EdgeConnectivityCalculator() 
+{
+}
+
+uint32_t EdgeConnectivityCalculator::findEdgeConnectivity(Graph & g)
+{
+	initializeDataFromGraph(g);
+	return findEdgeConnectivity();
 }
