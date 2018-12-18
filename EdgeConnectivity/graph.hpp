@@ -32,7 +32,7 @@ private:
 	Graph edgeCapacity_; // Stores edge capacity of graph (should be initialized to all ones)
 	FlowVecType currentFlow_; // Adjacency list of edges represting current amount of flow passing through an edge
 	std::vector<uint32_t> residualCapacity_; // Adjacency list representing the amount of flow that can still pass through an edge
-	std::vector<uint32_t> path_; // Vector that stores the current path between 2 vertices (usually source and sink in our case)
+	std::vector<int> path_; // Vector that stores the current path between 2 vertices (usually source and sink in our case)
 	uint32_t bfs(uint32_t source, uint32_t sink); // Finds a path between source and sink
 	uint32_t edmondsKarp(uint32_t source, uint32_t sink); // Find maximal flow between source and sink
 	uint32_t findEdgeConnectivity(); // Returns edge connectivity of the graph "g_"

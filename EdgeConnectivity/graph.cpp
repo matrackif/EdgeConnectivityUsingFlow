@@ -68,8 +68,18 @@ uint32_t EdgeConnectivityCalculator::edmondsKarp(uint32_t source, uint32_t sink)
 {
 	clearData();
 	uint32_t pathFlow = 0, maxFlow = 0;
-	while ((pathFlow = bfs(source, sink)) > 0)
+	while (true)
 	{
+		fill1DVec(residualCapacity_, 0);
+		fill1DVec(path_, -1);
+		residualCapacity_[source] = std::numeric_limits<uint32_t>::max();
+		path_[0] = -2;
+		pathFlow = bfs(source, sink);
+		if (pathFlow <= 0)
+		{
+			break;
+		}
+		maxFlow += pathFlow;
 		uint32_t s = sink;
 		while (s != source)
 		{
@@ -77,11 +87,10 @@ uint32_t EdgeConnectivityCalculator::edmondsKarp(uint32_t source, uint32_t sink)
 			// Workaround, maybe we should use a matrix instead of a 2d list after all?
 			uint32_t indexOfPrev = std::distance(g_[s].begin(), std::find(g_[s].begin(), g_[s].end(), prev));
 			uint32_t indexOfS = std::distance(g_[prev].begin(), std::find(g_[prev].begin(), g_[prev].end(), s));
-			currentFlow_[s][indexOfPrev] += pathFlow;
-			currentFlow_[prev][indexOfS] -= pathFlow;
+			currentFlow_[prev][indexOfS] += pathFlow;
+			currentFlow_[s][indexOfPrev] -= pathFlow;
 			s = prev;
 		}
-		maxFlow += pathFlow;
 	}
 	return maxFlow;
 }
@@ -99,9 +108,11 @@ uint32_t EdgeConnectivityCalculator::findEdgeConnectivity()
 void EdgeConnectivityCalculator::clearData()
 {
 	fill2DVec(currentFlow_, 0);
+	fill2DVec(edgeCapacity_, 1);
 	fill1DVec(path_, -1);
 	fill1DVec(residualCapacity_, 0);
-	residualCapacity_[0] = std::numeric_limits<uint32_t>::max();
+	residualCapacity_[0] = std::numeric_limits<uint32_t>::max(); // not necessary here?
+	path_[0] = -2; // so we can visit the first vertex in BFS
 }
 
 void EdgeConnectivityCalculator::initializeDataFromGraph(Graph & g)
@@ -115,8 +126,8 @@ void EdgeConnectivityCalculator::initializeDataFromGraph(Graph & g)
 		currentFlow_[i].resize(g_[i].size(), 0);
 	}
 	residualCapacity_ = std::vector<uint32_t>(g.size());
-	path_ = std::vector<uint32_t>(g.size());
-	clearData();
+	path_ = std::vector<int>(g.size());
+	//clearData();
 }
 
 EdgeConnectivityCalculator::EdgeConnectivityCalculator() 
