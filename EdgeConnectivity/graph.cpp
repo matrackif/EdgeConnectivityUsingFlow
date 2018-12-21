@@ -97,6 +97,8 @@ uint32_t EdgeConnectivityCalculator::edmondsKarp(uint32_t source, uint32_t sink)
 
 uint32_t EdgeConnectivityCalculator::findEdgeConnectivity()
 {
+        if (g_.size() < 1)
+            return 0;
 	uint32_t result = g_[0].size();
 	for (uint32_t i = 1; i < g_.size(); i++)
 	{
