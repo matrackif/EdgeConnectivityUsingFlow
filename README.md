@@ -1,8 +1,14 @@
 # Edge connectivity using flow
 
-## Running
+## Building and running the tests
 
 ```
-make
-./EdgeConnectivity/EdgeConnectivity
+make all test
 ```
+
+## Usage
+
+```
+./EdgeConnectivity/EdgeConnectivity input_graph.txt
+```
+See `test/*.in` for some example inputs.
