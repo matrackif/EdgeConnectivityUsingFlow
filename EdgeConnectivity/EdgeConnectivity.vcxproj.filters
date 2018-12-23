@@ -21,9 +21,15 @@
     <ClCompile Include="graph.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="graph_io.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="graph.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="graph_io.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
