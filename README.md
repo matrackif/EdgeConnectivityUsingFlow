@@ -17,11 +17,17 @@ See `test/*.in` for some example inputs.
 ./EdgeConnectivity/EdgeConnectivity n p
 ```
 In test mode, the program will measure the execution time of finding the edge connectivity in microseconds.
-The output will be a comma separated values text file called `exec_time_results.txt`.
+The output will be two comma separated values text files described below.
+#### Argument description
+`n` is an positive integer greater than 1 which is the number of vertices to be generated.
+And `p` is a double in the range `[0.0, 1.0]` which represents the probability of any vertex i being connected to vertex j.
 
-Where `n` is an positive integer greater than 1 which is the number of vertices to be generated.
-And `p` is a double in the range [0.0, 1.0] which represents the probability of any vertex i being connected to vertex j.
+Each test generates a file with the same format, a header `NumVertices,Probability,ExecTimeMicrosec`, then `MAX_ITERS` amount of rows (lines) with comma-separated values corresponding to the header.
 
-2 tests will be run, first run fixes the probability to be equal to `p` and checks execution time for randomly generated graphs
-with number of vertices from 2 to n.
-Second test randomly generates graphs with `n` vertices with varying probabilities 0.05, 0.1, 0.15, ..., 1.0.
+Note that for now `MAX_ITERS` is hardcoded to be `50`.
+
+#### Vertex Count Test
+Randomly generates graphs with fixed probability equal to `p`.
+The number of vertices is spread evenly  from `n / MAX_ITERS` to `n`. Outputs to file `num_vertices_test.txt`.
+#### Probability Test
+Second test randomly generates graphs with `n` vertices with varying probabilities evenly spaced from `1 / MAX_ITERS` to `1`.
