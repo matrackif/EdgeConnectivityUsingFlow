@@ -6,6 +6,8 @@
 #include <algorithm>
 #include <limits>
 #include <queue>
+#include <random>
+#include <fstream>
 
 // Graph typedefs
 typedef std::vector<std::vector<uint32_t>> Graph;
@@ -24,6 +26,7 @@ void fill1DVec(Vec & vec, VecType vt);
 template<typename Vec, typename VecType>
 void fill2DVec(Vec & vec, VecType vt);
 
+Graph generateGraph(uint32_t numOfVertices, double probability);
 // Class that will calculate edge connectivity using flow
 class EdgeConnectivityCalculator
 {

@@ -15,6 +15,37 @@ std::ostream & operator<<(std::ostream &stream, const Graph &g)
 	}
 	return stream;
 }
+/*	
+ * Generates graph with "numOfVertices" number of vertices
+ * Probability of any 2 vertices being connected is given by "probability"
+ */
+Graph generateGraph(uint32_t numOfVertices, double probability)
+{
+	Graph ret(numOfVertices); // Randomly generated graph to be returned
+	static std::random_device rd; // random device engine, usually based on /dev/random on UNIX-like systems
+	static std::mt19937 rng(rd()); // initialize Mersennes' twister using rd to generate the seed
+	std::bernoulli_distribution bernoulliDistribution(probability); // operator() returns true with probability, and false with 1 - probability
+	double cnt = 0;
+	// Loop through all rows
+	for (unsigned i = 0; i < ret.size(); ++i)
+	{
+		// Loop through all other vertices, we only have to loop through top half of the adjacency "matrix" because it is symmetric
+		// Since if vertex i is connected to j, then j is connected to i
+		for (unsigned j = i + 1; j < numOfVertices; ++j)
+		{
+			// This if statement has a "probability" of being true
+			// For example if probability = 0.55 then it will return true 0.55 * 100 = 55% of the time
+			// And it returns false (1 - 0.55) * 100 = 45% of the time
+			if (bernoulliDistribution(rng))
+			{
+				// We connect vertex i with j, and j with i
+				ret[i].push_back(j);
+				ret[j].push_back(i);
+			}
+		}
+	}
+	return ret;
+}
 
 template<typename Vec, typename VecType>
 void fill1DVec(Vec & vec, VecType vt)
