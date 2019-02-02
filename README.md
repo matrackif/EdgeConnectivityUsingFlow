@@ -31,3 +31,4 @@ Randomly generates graphs with fixed probability equal to `p`.
 The number of vertices is spread evenly  from `n / MAX_ITERS` to `n`. Outputs to file `num_vertices_test.txt`.
 #### Probability Test
 Second test randomly generates graphs with `n` vertices with varying probabilities evenly spaced from `1 / MAX_ITERS` to `1`.
+Outputs to file `probability_test.txt`
